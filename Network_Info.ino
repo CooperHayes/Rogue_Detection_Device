@@ -3,7 +3,7 @@
 
 
 void printNetworkInfo(){
-    Serial.begin(115200);
+    Serial.begin(9600);
     Serial.println();
     Serial.println("NETWORK INFO");
     Serial.println("============");

@@ -3,7 +3,7 @@
 
 
 void setupWiFi(){
-    Serial.begin(115200)
+    Serial.begin(9600)
     WiFi.begin(WIFI_SSID , WIFI_PASSWORD);
 
     Serial.print("Connecting to WiFi");
