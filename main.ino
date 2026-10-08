@@ -1,14 +1,14 @@
 void setup(){
 
-    setupWifi()
-    printNetworkInfo()
+    setupWifi();
+    printNetworkInfo();
 
 
 
 
 }
 
-void loop{
+void loop(){
 
 
 
