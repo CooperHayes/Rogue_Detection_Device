@@ -7,7 +7,7 @@ void setupWiFi(){
 
     Serial.print("Connecting to WiFi");
 
-    while(Wifi.status() != WL_CONNECTED){
+    while(WiFi.status() != WL_CONNECTED){
         delay(500)
         Serial.print(".")
     }
