@@ -1,4 +1,4 @@
-#include <Wifi.h>
+#include <WiFi.h>
 #include "secrets.h"
 
 
