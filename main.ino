@@ -1,5 +1,7 @@
 void setup(){
 
+    setupWifi()
+    printNetworkInfo()
 
 
 
