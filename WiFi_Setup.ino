@@ -2,22 +2,19 @@
 #include "secrets.h"
 
 
-void setup() {
+void setupWiFi(){
     Serial.begin(115200);
-    delay(1000);
+    WiFi.begin(WIFI_SSID , WIFI_PASSWORD);
 
-    Serial.println("1: ESP32 started");
+    Serial.print("Connecting to WiFi");
 
-    setupWiFi();
+    while(WiFi.status() != WL_CONNECTED){
+       Serial.print("WiFi status: ");
+       Serial.println(WiFi.status());
+       delay(2000);
+    }
 
-    Serial.println("2: WiFi function finished");
+    Serial.println();
+    Serial.println("Connected!");
 
-    printNetworkInfo();
-
-    Serial.println("3: Network information finished");
-}
-
-void loop() {
-    Serial.println("4: Main loop running");
-    delay(2000);
 }
