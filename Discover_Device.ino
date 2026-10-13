@@ -1,4 +1,5 @@
 #include <WiFi.h>
+#include <esp_netif.h>
 #include <lwip/etharp.h>
 #include <lwip/ip4_addr.h>
 #include <lwip/netif.h>
@@ -34,6 +35,8 @@ void discoverDevice(){
     Serial.println("\nTarget is on the local subnet");
     Serial.println("Ready to initialize ARP resolution");
 
+    checkNetworkInterface();
+
 
 } // end discoverDevice
 
@@ -55,3 +58,20 @@ bool isOnSubnet(IPAddress  targetIP){
     return true;
 
 } // end isOnSubnet
+
+void checkNetworkInterface(){
+    if(WiFi.status() == WL_CONNECTED){
+        Serial.println("WiFi is not connected.");
+        return;
+    }
+
+    esp_netif_t* wifiInterface = esp_netif_get_handle_from_ifkey("WIFI_STA_DEF");
+
+    if(wifiInterface == nullptr){
+        Serial.println("WiFi interface not located.");
+        return;
+    }
+
+    Serial.print("WiFi station interface found: ");
+    Serial.println(wifiInterface);
+}
