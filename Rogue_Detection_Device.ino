@@ -6,11 +6,7 @@ void setup() {
 }
 
 void loop() {
-    Serial.println("\n--- ESP32 Network Information ---");
-
-    printNetworkInfo();
-
-    Serial.println("-------------------------------");
+    discoverDevice();
 
     delay(5000);
 }
