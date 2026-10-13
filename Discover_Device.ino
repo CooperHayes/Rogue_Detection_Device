@@ -31,7 +31,7 @@ void discoverDevice(){
         return;
     }
 
-    Serial.println("Target is on the local subnet");
+    Serial.println("\nTarget is on the local subnet");
     Serial.println("Ready to initialize ARP resolution");
 
 
