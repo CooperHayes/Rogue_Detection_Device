@@ -72,5 +72,5 @@ void checkNetworkInterface(){
         return;
     }
 
-    Serial.print("WiFi station interface found: ");
+    Serial.print("WiFi station interface found.");
 }
