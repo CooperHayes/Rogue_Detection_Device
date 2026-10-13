@@ -26,4 +26,32 @@ void discoverDevice(){
     Serial.print("Target IP: ");
     Serial.print(targetIP);
 
-}
+    if(isonSubnet(targetIP) == false){
+        Serial.println("Target IP is not on the local subnet.");
+        return;
+    }
+
+    Serial.println("Target is on the local subnet");
+    Serial.println("Ready to initialize ARP resolution");
+
+
+} // end discoverDevice
+
+
+bool isOnSubnet(IPAddress  targetIP){
+
+    IPAddress localIP = WiFi.localIP();
+    IPAddress subnetMask = WiFi.subnetMask();
+
+    for(int i = 0 ; i < 4 ; i++){
+        
+        if((localIP[i] & subnetMask[i]) != (localIP[i] & subnetMask[i])){
+
+            return false;
+
+        }
+    }
+
+    return true;
+
+} // end isOnSubnet
