@@ -1,4 +1,7 @@
-#include "WiFi.h"
+#include <WiFi.h>
+#include <lwip/etharp.h>
+#include <lwip/ip4_addr.h>
+#include <lwip/netif.h>
 
 void discoverDevice(){
 
