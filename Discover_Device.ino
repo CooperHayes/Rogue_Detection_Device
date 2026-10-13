@@ -26,7 +26,7 @@ void discoverDevice(){
     Serial.print("Target IP: ");
     Serial.print(targetIP);
 
-    if(isonSubnet(targetIP) == false){
+    if(isOnSubnet(targetIP) == false){
         Serial.println("Target IP is not on the local subnet.");
         return;
     }
