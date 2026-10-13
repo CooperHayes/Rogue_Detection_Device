@@ -4,7 +4,9 @@ void discoverDevice(){
 
     IPAddress targetIP(192 , 168 , 0 , 69);
 
-    while(WiFi.status() != "WL_CONNECTED"){
+    Serial.println("\n---ARP Disovery Test---")
+
+    while(WiFi.status() != WL_CONNECTED){
         Serial.println("ESP32 is not connected to WiFi");
         return;
     }
