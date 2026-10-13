@@ -60,7 +60,7 @@ bool isOnSubnet(IPAddress  targetIP){
 } // end isOnSubnet
 
 void checkNetworkInterface(){
-    if(WiFi.status() == WL_CONNECTED){
+    if(WiFi.status() != WL_CONNECTED){
         Serial.println("WiFi is not connected.");
         return;
     }
