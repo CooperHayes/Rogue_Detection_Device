@@ -68,6 +68,7 @@ void checkNetworkInterface(){
         Serial.println("WiFi is not connected.");
         return;
     }
+    Serial.println("---NETWORK INTERFACE CHECK---");
 
     esp_netif_t* wifiInterface = esp_netif_get_handle_from_ifkey("WIFI_STA_DEF");
 
@@ -75,6 +76,21 @@ void checkNetworkInterface(){
         Serial.println("WiFi interface not located.");
         return;
     }
-
     Serial.print("WiFi station interface found.");
+
+
+
+    struct netif* lwipInterface =
+        static_cast<struct netif*>(
+            esp_netif_get_netif_impl(wifiInterface)
+        );
+
+    if(lwipInterface == nullptr){
+        Serial.println("lwIP interface not found");
+    }
+
+    Serial.println("lwIP interface found!");
+    Serial.println("---END INTERFACE CHECK---");
+    Serial.println();
+
 }
