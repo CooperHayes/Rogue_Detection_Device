@@ -15,6 +15,9 @@ void discoverDevice(){
         return;
     }
 
+    Serial.print("WiFi status: ")
+    Serial.println(WiFi.status())
+
     Serial.print("ESP32 IP: ");
     Serial.println(WiFi.localIP());
 
@@ -23,6 +26,7 @@ void discoverDevice(){
 
     Serial.print("Default Gateway: ");
     Serial.println(WiFi.gatewayIP());
+
 
     Serial.print("Target IP: ");
     Serial.print(targetIP);
