@@ -73,7 +73,7 @@ void checkNetworkInterface(){
         Serial.println("WiFi interface not located.");
         return;
     }
-    Serial.print("WiFi station interface found.");
+    Serial.println("WiFi station interface found.");
 
     ip4_addr_t targetAddress;
 
