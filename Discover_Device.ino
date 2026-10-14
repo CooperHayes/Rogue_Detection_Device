@@ -18,9 +18,6 @@ void discoverDevice(){
     Serial.print("WiFi status: ");
     Serial.println(WiFi.status());
 
-    Serial.print("ESP32 IP: ");
-    Serial.println(WiFi.localIP());
-
     Serial.print("Subnet Mask: ");
     Serial.println(WiFi.subnetMask());
 
@@ -78,19 +75,12 @@ void checkNetworkInterface(){
     }
     Serial.print("WiFi station interface found.");
 
+    ip4_addr_t targetAddress;
 
+    IP4_ADDR(&targetAddress , 192 , 168 , 0 , 69);
 
-    struct netif* lwipInterface =
-        static_cast<struct netif*>(
-            esp_netif_get_netif_impl(wifiInterface)
-        );
+    Serial.println("Target IPv4 address intialized.");
 
-    if(lwipInterface == nullptr){
-        Serial.println("lwIP interface not found");
-    }
-
-    Serial.println("lwIP interface found!");
-    Serial.println("---END INTERFACE CHECK---");
     Serial.println();
 
 }
