@@ -15,8 +15,8 @@ void discoverDevice(){
         return;
     }
 
-    Serial.print("WiFi status: ")
-    Serial.println(WiFi.status())
+    Serial.print("WiFi status: ");
+    Serial.println(WiFi.status());
 
     Serial.print("ESP32 IP: ");
     Serial.println(WiFi.localIP());
