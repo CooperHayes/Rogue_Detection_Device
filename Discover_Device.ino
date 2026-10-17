@@ -3,6 +3,7 @@
 #include <lwip/etharp.h>
 #include <lwip/ip4_addr.h>
 #include <lwip/netif.h>
+#include <lwip/tcpip.h>
 
 void discoverDevice(){
 
@@ -10,7 +11,7 @@ void discoverDevice(){
 
     Serial.println("\n---ARP Disovery Test---");
 
-    while(WiFi.status() != WL_CONNECTED){
+    if(WiFi.status() != WL_CONNECTED){
         Serial.println("ESP32 is not connected to WiFi");
         return;
     }
@@ -49,7 +50,7 @@ bool isOnSubnet(IPAddress  targetIP){
 
     for(int i = 0 ; i < 4 ; i++){
         
-        if((localIP[i] & subnetMask[i]) != (localIP[i] & subnetMask[i])){
+        if((localIP[i] & subnetMask[i]) != (targetIP[i] & subnetMask[i])){
 
             return false;
 
@@ -81,6 +82,46 @@ void checkNetworkInterface(){
 
     Serial.println("Target IPv4 address intialized.");
 
-    Serial.println();
+    IPAddress esp32IP = WiFi.localIP();
 
+    ip4_addr_t* localAddress = new ip4_addr_t;
+
+    IP4_ADDR(
+        localAddress,
+        esp32IP[0],
+        esp32IP[1],
+        esp32IP[2],
+        esp32IP[3]
+        
+    );
+
+    err_t result = tcpip_callback(findLwipInterface , localAddress);
+
+    if(result != ERR_OK){
+        Serial.println("Failed to schedule interface lookup");
+        delete localAddress;
+    }
+
+}
+
+void findLwipInterface(void* argument){
+
+    ip4_addr_t* localAddress = static_cast<ip4_addr_t*>(argument);
+
+    for(struct netif* current = netif_list ; current != nullptr ; current = current-> next){
+        
+        if(ip4_addr_cmp(netif_ip4_addr(current) , localAddress)){
+
+            Serial.println("Matching interface found.");
+
+            struct netif* lwipInterface = current;
+
+            Serial.print("Interface number: ");
+            Serial.println(lwipInterface->num);
+
+            break;
+        }
+        
+    }
+    delete localAddress;
 }
