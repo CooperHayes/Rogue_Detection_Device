@@ -8,7 +8,7 @@
 
 struct ArpRequestData{
     ip4_addr_t localAddress;
-    ipd_addr_t targetAddress;
+    ip4_addr_t targetAddress;
 };
 
 void discoverDevice(){
@@ -99,7 +99,7 @@ void checkNetworkInterface(){
         esp32IP[3]
         
     );
-    
+
     Serial.println("Local and target IPv4 address intialized.");
 
 
@@ -118,7 +118,7 @@ void findLwipInterface(void* argument){
 
     for(struct netif* current = netif_list ; current != nullptr ; current = current-> next){
         
-        if(ip4_addr_cmp(netif_ip4_addr(current) , &request -> localaddress)){
+        if(ip4_addr_cmp(netif_ip4_addr(current) , &request -> localAddress)){
 
             Serial.println("Matching interface found.");
 
