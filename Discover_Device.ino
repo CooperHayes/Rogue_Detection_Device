@@ -5,6 +5,12 @@
 #include <lwip/netif.h>
 #include <lwip/tcpip.h>
 
+
+struct ArpRequestData{
+    ip4_addr_t localAddress;
+    ipd_addr_t targetAddress;
+};
+
 void discoverDevice(){
 
     IPAddress targetIP(192 , 168 , 0 , 69);
@@ -76,41 +82,43 @@ void checkNetworkInterface(){
     }
     Serial.println("WiFi station interface found.");
 
-    ip4_addr_t targetAddress;
 
-    IP4_ADDR(&targetAddress , 192 , 168 , 0 , 69);
+    ArpRequestData* request = new ArpRequestData;
 
-    Serial.println("Target IPv4 address intialized.");
+   
+
+    IP4_ADDR(&request -> targetAddress , 192 , 168 , 0 , 69);
 
     IPAddress esp32IP = WiFi.localIP();
 
-    ip4_addr_t* localAddress = new ip4_addr_t;
-
     IP4_ADDR(
-        localAddress,
+        &request -> localAddress,
         esp32IP[0],
         esp32IP[1],
         esp32IP[2],
         esp32IP[3]
         
     );
+    
+    Serial.println("Local and target IPv4 address intialized.");
 
-    err_t result = tcpip_callback(findLwipInterface , localAddress);
+
+    err_t result = tcpip_callback(findLwipInterface , request);
 
     if(result != ERR_OK){
         Serial.println("Failed to schedule interface lookup");
-        delete localAddress;
+        delete request;
     }
 
 }
 
 void findLwipInterface(void* argument){
 
-    ip4_addr_t* localAddress = static_cast<ip4_addr_t*>(argument);
+    ArpRequestData* request = static_cast<ArpRequestData*>(argument);
 
     for(struct netif* current = netif_list ; current != nullptr ; current = current-> next){
         
-        if(ip4_addr_cmp(netif_ip4_addr(current) , localAddress)){
+        if(ip4_addr_cmp(netif_ip4_addr(current) , &request -> localaddress)){
 
             Serial.println("Matching interface found.");
 
@@ -123,5 +131,5 @@ void findLwipInterface(void* argument){
         }
         
     }
-    delete localAddress;
+    delete request;
 }
