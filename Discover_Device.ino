@@ -127,7 +127,7 @@ void findLwipInterface(void* argument){
             Serial.print("Interface number: ");
             Serial.println(lwipInterface->num);
 
-            err_t arpRequest = etharp(
+            err_t arpRequest = etharp_request(
                 lwipInterface,
                 &request -> targetAddress
             );
