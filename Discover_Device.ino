@@ -4,12 +4,20 @@
 #include <lwip/ip4_addr.h>
 #include <lwip/netif.h>
 #include <lwip/tcpip.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/queue.h>
+
 
 
 struct ArpRequestData{
     ip4_addr_t localAddress;
     ip4_addr_t targetAddress;
 };
+
+QueueHandle_t arpResultQueue = nullptr;
+
+unsigned long arpRequestTime = 0;
+bool arpLookupPending = false;
 
 void discoverDevice(){
 
@@ -110,7 +118,7 @@ void checkNetworkInterface(){
         delete request;
     }
 
-}
+} // end checkNetworkInterface
 
 void findLwipInterface(void* argument){
 
@@ -131,13 +139,17 @@ void findLwipInterface(void* argument){
                 lwipInterface,
                 &request -> targetAddress
             );
-
-            if(arpRequest == ERR_OK){
+            
+            bool requestSucceeded = (arpRequest == ERR_OK);
+            if(requestSucceeded){
                 Serial.println("ARP request submitted successfully.");
             }
             else{
                 Serial.print("ARP request failed. Error code: ");
                 Serial.println(static_cast<int>(arpRequest));
+            }
+            if(arpResultQueue != nullptr){
+                xQueueSend(arpResultQueue , &requestSucceeded , 0);
             }
 
 
@@ -146,4 +158,35 @@ void findLwipInterface(void* argument){
         
     }
     delete request;
-}
+} // end findLwipInterface
+
+void processArpResult(){
+    if(arpResultQueue == nullptr){
+        Serial.println("Failed to create ARP result queue");
+        return;
+    }
+
+    bool receivedResult;
+    BaseType_t status = xQueueReceive(
+        arpResultQueue,
+        &receivedResult,
+        0
+    );
+
+    if(status == pdTRUE){
+        Serial.println("Received ARP request result");
+        if(receivedResult){
+            arpRequestTime = millis();
+            arpLookupPending = true;
+            Serial.println("Lookup timer start");
+        }
+        else{
+        Serial.println("ARP request was not accepted");
+        }
+    }  
+     
+    if(arpLookupPending && millis() - arpRequestTime >= 2000){
+        Serial.println("Two seconds have elasped. Ready to start ARP lookup");
+        arpLookupPending = false;
+    }
+} // end processArpResult

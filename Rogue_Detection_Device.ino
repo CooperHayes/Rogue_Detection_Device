@@ -3,10 +3,17 @@ void setup() {
     delay(10000);
 
     setupWiFi();
+
+    arpResultQueue = xQueueCreate(1 , sizeof(bool));
+    if(arpResultQueue == nullptr){
+        Serial.println("Failed to create ARP result queue");
+        return;
+    }
+
 }
 
 void loop() {
     discoverDevice();
-
-    delay(5000);
+    processArpResult();
+    delay(100);
 }
