@@ -1,3 +1,10 @@
+#include <freertos/FreeRTOS.h>
+#include <freertos/queue.h>
+
+QueueHandle_t arpResultQueue = nullptr;
+
+
+
 void setup() {
     Serial.begin(115200);
     delay(10000);
@@ -10,10 +17,12 @@ void setup() {
         return;
     }
 
+    discoverDevice();
+
+
 }
 
 void loop() {
-    discoverDevice();
     processArpResult();
     delay(100);
 }

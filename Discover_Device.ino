@@ -14,7 +14,7 @@ struct ArpRequestData{
     ip4_addr_t targetAddress;
 };
 
-QueueHandle_t arpResultQueue = nullptr;
+
 
 unsigned long arpRequestTime = 0;
 bool arpLookupPending = false;
@@ -184,7 +184,7 @@ void processArpResult(){
         Serial.println("ARP request was not accepted");
         }
     }  
-     
+
     if(arpLookupPending && millis() - arpRequestTime >= 2000){
         Serial.println("Two seconds have elasped. Ready to start ARP lookup");
         arpLookupPending = false;
