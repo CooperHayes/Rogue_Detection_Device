@@ -160,6 +160,89 @@ void findLwipInterface(void* argument){
     delete request;
 } // end findLwipInterface
 
+void lookupArpTable(void* argument){
+    ArpRequestData* request = 
+        static_cast<ArpRequestData*>(argument);
+
+    bool interfaceFound = false;
+
+    for(struct netif* current = netif_list ; current != nullptr ; current = current-> next){
+        
+        if(ip4_addr_cmp(netif_ip4_addr(current) , &request -> localAddress)){
+
+            interfaceFound = true;
+            struct netif* lwipInterface = current;
+            Serial.println("Matching interface found for ARP lookup.");
+            struct eth_addr* foundMAC = nullptr;
+            const ip4_addr_t* foundIP = nullptr;
+
+            s8_t result = etharp_find_addr(
+                lwipInterface,
+                &request -> targetAddress,
+                &foundMAC,
+                &foundIP
+            );
+            if (result >= 0 && foundMAC != nullptr) {
+
+                Serial.println("MAC address successfully resolved!");
+
+                Serial.printf(
+                    "MAC: %02X:%02X:%02X:%02X:%02X:%02X\n",
+                    foundMAC->addr[0],
+                    foundMAC->addr[1],
+                    foundMAC->addr[2],
+                    foundMAC->addr[3],
+                    foundMAC->addr[4],
+                    foundMAC->addr[5]
+                );
+
+            } else {
+                Serial.println("No resolved ARP entry found for target IP.");
+                }
+            break;
+        }
+    }
+
+    if (!interfaceFound) {
+        Serial.println("No matching lwIP interface found for ARP lookup.");
+    }
+    delete request;
+    
+} // end lookupArpTable
+void scheduleArpLookup(){
+    ArpRequestData* request = new ArpRequestData;
+
+    IPAddress esp32IP = WiFi.localIP();
+
+    IP4_ADDR(
+        &request->localAddress,
+        esp32IP[0],
+        esp32IP[1],
+        esp32IP[2],
+        esp32IP[3]
+    );
+
+    IP4_ADDR(
+        &request->targetAddress,
+        192,
+        168,
+        0,
+        69
+    );
+
+    err_t result = tcpip_callback(lookupArpTable , request);
+
+    if(result == ERR_OK){
+        Serial.println("ARP lookup successfully scheduled.");
+    }
+    else{
+        Serial.println("Failed to schedule ARP lookup.");
+        delete request;
+    }
+} // end scheduleArpLookup
+
+
+
 void processArpResult(){
     if(arpResultQueue == nullptr){
         Serial.println("Failed to create ARP result queue");
@@ -187,6 +270,7 @@ void processArpResult(){
 
     if(arpLookupPending && millis() - arpRequestTime >= 2000){
         Serial.println("Two seconds have elasped. Ready to start ARP lookup");
+        scheduleArpLookup();
         arpLookupPending = false;
     }
 } // end processArpResult
