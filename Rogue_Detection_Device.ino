@@ -2,7 +2,12 @@
 #include <freertos/queue.h>
 
 QueueHandle_t arpResultQueue = nullptr;
+QueueHandle_t arpLookupQueue = nullptr;
 
+struct ArpLookupResult {
+    bool success;
+    uint8_t mac[6];
+};
 
 
 void setup() {
@@ -17,6 +22,12 @@ void setup() {
         return;
     }
 
+    arpLookupQueue = xQueueCreate(1 , sizeof(ArpLookupResult));
+    if(arpLookupQueue == nullptr){
+        Serial.println("Failed to create ARP lookup queue");
+        return;
+    }
+
     discoverDevice();
 
 
@@ -24,5 +35,6 @@ void setup() {
 
 void loop() {
     processArpResult();
+    processLookupResult();
     delay(100);
 }
