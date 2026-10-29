@@ -1,5 +1,8 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
+#include "Arduino.h"
+#include <Arp_dicovery.h>
+
 
 QueueHandle_t arpResultQueue = nullptr;
 QueueHandle_t arpLookupQueue = nullptr;
