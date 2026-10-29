@@ -7,10 +7,6 @@
 QueueHandle_t arpResultQueue = nullptr;
 QueueHandle_t arpLookupQueue = nullptr;
 
-struct ArpLookupResult {
-    bool success;
-    uint8_t mac[6];
-};
 
 
 void setup() {

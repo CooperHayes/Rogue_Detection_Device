@@ -3,10 +3,6 @@
 #include <lwip/tcpip.h>
 #include <WiFi.h>
 #include <esp_netif.h>
-struct ArpRequestData{
-    ip4_addr_t localAddress;
-    ip4_addr_t targetAddress;
-};
 
 
 
