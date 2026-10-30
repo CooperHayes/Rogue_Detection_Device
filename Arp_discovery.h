@@ -25,7 +25,7 @@ extern QueueHandle_t arpResultQueue;
 extern QueueHandle_t arpLookupQueue;
 
 // Discovery functions
-void discoverDevice();
+void discoverDevice(IPAddress targetIP);
 bool isOnSubnet(IPAddress targetIP);
 void checkNetworkInterface();
 void processArpResult();

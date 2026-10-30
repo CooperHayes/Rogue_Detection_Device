@@ -12,9 +12,11 @@ unsigned long arpRequestTime = 0;
 unsigned long lastLookup = 0;
 bool arpLookupPending = false;
 
-void discoverDevice(){
+static IPAddress discoveryTarget;
 
-    IPAddress targetIP(192 , 168 , 0 , 69);
+void discoverDevice(IPAddress targetIP){
+
+    discoveryTarget = targetIP;
 
     Serial.println("\n---ARP Disovery Test---");
 
@@ -87,7 +89,12 @@ void checkNetworkInterface(){
 
    
 
-    IP4_ADDR(&request -> targetAddress , 192 , 168 , 0 , 69);
+    IP4_ADDR(&request -> targetAddress , 
+        discoveryTarget[0], 
+        discoveryTarget[1],
+        discoveryTarget[2],
+        discoveryTarget[3]
+        );
 
     IPAddress esp32IP = WiFi.localIP();
 
@@ -163,10 +170,10 @@ bool scheduleArpLookup(){
 
     IP4_ADDR(
         &request->targetAddress,
-        192,
-        168,
-        0,
-        69
+        discoveryTarget[0],
+        discoveryTarget[1],
+        discoveryTarget[2],
+        discoveryTarget[3]
     );
 
     err_t result = tcpip_callback(lookupArpTable , request);

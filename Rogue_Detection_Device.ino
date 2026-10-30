@@ -27,7 +27,8 @@ void setup() {
         return;
     }
 
-    discoverDevice();
+    IPAddress laptopIP(192 ,168, 0, 69);
+    discoverDevice(laptopIP);
 
 
 }
