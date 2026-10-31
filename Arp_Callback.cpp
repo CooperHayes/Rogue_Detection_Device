@@ -67,7 +67,8 @@ void lookupArpTable(void* argument){
     ArpRequestData* request = 
         static_cast<ArpRequestData*>(argument);
     
-        ArpLookupResult lookupResult = {};
+    ArpLookupResult lookupResult = {};
+    lookupResult.targetIP = request -> targetAddress;
 
     bool interfaceFound = false;
 

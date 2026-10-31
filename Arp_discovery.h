@@ -17,6 +17,7 @@ struct ArpRequestData {
 // Result returned from an ARP table lookup
 struct ArpLookupResult {
     bool success;
+    ip4_addr_t targetIP;
     uint8_t mac[6];
 };
 

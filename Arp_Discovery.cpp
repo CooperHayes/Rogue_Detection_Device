@@ -120,6 +120,7 @@ void checkNetworkInterface(){
 } // end checkNetworkInterface
 
 void processArpResult(){
+    Serial.println("---ARP DISCOVERY TEST---");
     if(arpResultQueue == nullptr){
         Serial.println("Failed to create ARP result queue");
         return;
@@ -207,6 +208,9 @@ void processLookupResult(){
     }
 
     Serial.println("\n--- ARP LOOKUP RESULT ---");
+
+    Serial.print("IP: ");
+    Serial.println(ip4addr_ntoa(&receivedResult.targetIP));
 
     if (receivedResult.success) {
 
