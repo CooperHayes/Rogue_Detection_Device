@@ -27,8 +27,8 @@ void setup() {
         return;
     }
 
-    IPAddress laptopIP(192 ,168, 0, 69);
-    discoverDevice(laptopIP);
+    IPAddress esxiIP(192 ,168, 0, 53);
+    discoverDevice(esxiIP);
 
 
 }
