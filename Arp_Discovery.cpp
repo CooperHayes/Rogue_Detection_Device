@@ -120,7 +120,6 @@ void checkNetworkInterface(){
 } // end checkNetworkInterface
 
 void processArpResult(){
-    Serial.println("---ARP DISCOVERY TEST---");
     if(arpResultQueue == nullptr){
         Serial.println("Failed to create ARP result queue");
         return;
@@ -134,6 +133,7 @@ void processArpResult(){
     );
 
     if(status == pdTRUE){
+        Serial.println("---ARP DISCOVERY TEST---");
         Serial.println("Received ARP request result");
         if(receivedResult){
             arpRequestTime = millis();
