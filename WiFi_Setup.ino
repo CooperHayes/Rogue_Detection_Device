@@ -16,7 +16,8 @@ void setupWiFi(){
             maxAttempts
         );
 
-        WiFi.begin(ssid, password);
+        // Credentials pulled from a secrets.h
+        WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
         unsigned long startTime = millis();
 
