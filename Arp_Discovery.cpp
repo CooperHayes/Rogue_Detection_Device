@@ -136,6 +136,7 @@ void checkNetworkInterface(){
 
     if(result != ERR_OK){
         Serial.println("Failed to schedule interface lookup");
+        lookupResultReceived = false;
         delete request;
     }
 
@@ -164,6 +165,7 @@ void processArpResult(){
         }
         else{
         Serial.println("ARP request was not accepted");
+        lookupResultReceived = true;
         }
     }  
 
@@ -207,6 +209,7 @@ bool scheduleArpLookup(){
     }
     else{
         Serial.println("Failed to schedule ARP lookup.");
+        lookupResultReceived = false;
         delete request;
         return false;
     }
