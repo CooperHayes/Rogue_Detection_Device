@@ -7,12 +7,34 @@
 
 
 
-
+// Individual ARP look up variables
 unsigned long arpRequestTime = 0;
 unsigned long lastLookup = 0;
 bool arpLookupPending = false;
 
+// Subnet scanning variables
+static ScanState scanState = ScanState::IDLE;
+static uint8_t currentHost = 1;
+static uint8_t currentHost = 5;
+static bool lookupResultReceived = false;
+
+
 static IPAddress discoveryTarget;
+
+void startSubnetScan() {
+
+    if (scanState != ScanState::IDLE) {
+        Serial.println("Scanner is already running.");
+        return;
+    }
+
+    currentHost = 1;
+    scanState = ScanState::DISCOVERING;
+
+    Serial.println("Starting subnet scan.");
+
+    discoverDevice(IPAddress(192, 168, 0, currentHost));
+}
 
 void discoverDevice(IPAddress targetIP){
 
@@ -231,4 +253,38 @@ void processLookupResult(){
         Serial.println("Discovery unsuccessful.");
         Serial.println("No resolved MAC address was found.");
     }
+
+    lookupResultReceived = true;
 } // end processLookupResult
+
+void processSubnetScan() {
+
+    // Only proceed if a scan is running.
+    if (scanState != ScanState::DISCOVERING) {
+        return;
+    }
+
+    // Wait until the current IP lookup finishes.
+    if (lookupResultReceived == false) {
+        return;
+    }
+
+    // Reset the flag for the next IP.
+    lookupResultReceived = false;
+
+    // Move to the next IP address.
+    currentHost++;
+
+    // Check whether we have reached the end of the scan.
+    if (currentHost > finalHost) {
+        scanState = ScanState::COMPLETE;
+        Serial.println("\nSubnet scan complete!");
+        return;
+    }
+
+    // Start discovering the next IP.
+    Serial.print("\nScanning next IP: 192.168.0.");
+    Serial.println(currentHost);
+
+    discoverDevice(IPAddress(192, 168, 0, currentHost));
+} // end processSubnetScan

@@ -21,6 +21,13 @@ struct ArpLookupResult {
     uint8_t mac[6];
 };
 
+// Scan state object for sequential ARP lookups
+enum class ScanState{
+    IDLE, 
+    DISCOVERING,
+    COMPLETE
+};
+
 // Shared queues
 extern QueueHandle_t arpResultQueue;
 extern QueueHandle_t arpLookupQueue;
@@ -29,6 +36,8 @@ extern QueueHandle_t arpLookupQueue;
 void discoverDevice(IPAddress targetIP);
 bool isOnSubnet(IPAddress targetIP);
 void checkNetworkInterface();
+void startSubnetScan();
+void processSubnetScan();
 void processArpResult();
 bool scheduleArpLookup();
 void processLookupResult();

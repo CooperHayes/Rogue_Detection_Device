@@ -27,8 +27,8 @@ void setup() {
         return;
     }
 
-    IPAddress phoneIP(192 ,168, 0, 41);
-    discoverDevice(phoneIP);
+
+    startSubnetScan();
 
 
 }
@@ -36,5 +36,6 @@ void setup() {
 void loop() {
     processArpResult();
     processLookupResult();
+    processSubnetScan();
     delay(100);
 }
