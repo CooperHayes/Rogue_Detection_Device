@@ -19,6 +19,11 @@ static uint8_t finalHost = 5;
 static bool lookupResultReceived = false;
 
 
+// Look up attempt variables
+static uint8_t lookupAttempts = 0;
+static const uint8_t MAX_LOOKUP_ATTEMPTS = 3;
+
+
 static IPAddress discoveryTarget;
 
 void startSubnetScan() {
@@ -136,7 +141,7 @@ void checkNetworkInterface(){
 
     if(result != ERR_OK){
         Serial.println("Failed to schedule interface lookup");
-        lookupResultReceived = false;
+        lookupResultReceived = true;
         delete request;
     }
 
@@ -176,7 +181,20 @@ void processArpResult(){
 
         if(lookupScheduled) {
             arpLookupPending = false;
+            lookupAttempts = 0;
         }
+        else {
+        lookupAttempts++;
+
+        if (lookupAttempts >= MAX_LOOKUP_ATTEMPTS) {
+            Serial.println("Maximum lookup attempts reached.");
+
+            arpLookupPending = false;
+            lookupAttempts = 0;
+
+            lookupResultReceived = true;
+        }
+    }
     }
 } // end processArpResult
 
@@ -274,6 +292,7 @@ void processSubnetScan() {
 
     // Reset the flag for the next IP.
     lookupResultReceived = false;
+    lookupAttempts = 0;
 
     // Move to the next IP address.
     currentHost++;
