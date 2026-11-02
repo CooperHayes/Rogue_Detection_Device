@@ -107,6 +107,7 @@ void checkNetworkInterface(){
 
     if(wifiInterface == nullptr){
         Serial.println("WiFi interface not located.");
+        lookupResultReceived = true;
         return;
     }
     Serial.println("WiFi station interface found.");
@@ -227,7 +228,6 @@ bool scheduleArpLookup(){
     }
     else{
         Serial.println("Failed to schedule ARP lookup.");
-        lookupResultReceived = false;
         delete request;
         return false;
     }
@@ -293,7 +293,7 @@ void processSubnetScan() {
     // Reset the flag for the next IP.
     lookupResultReceived = false;
     lookupAttempts = 0;
-
+    arpLookupPending = false;
     // Move to the next IP address.
     currentHost++;
 
