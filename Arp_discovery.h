@@ -21,6 +21,7 @@ struct ArpLookupResult {
     uint8_t mac[6];
 };
 
+// Discovered device object for devices with a MAC address
 struct DiscoveredDevice {
     IPAddress ipAddress;
     uint8_t macAddress[6];
@@ -32,6 +33,11 @@ enum class ScanState{
     DISCOVERING,
     COMPLETE
 };
+
+// Shared variables for updating discovered devices array in processLookupResult()
+constexpr int MAX_DISCOVERED_DEVICES = 50;
+extern DiscoveredDevice discoveredDevices[MAX_DISCOVERED_DEVICES];
+extern int discoveredDeviceCount;
 
 // Shared queues
 extern QueueHandle_t arpResultQueue;
