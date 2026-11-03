@@ -312,6 +312,7 @@ void processSubnetScan() {
     if (currentHost > finalHost) {
         scanState = ScanState::COMPLETE;
         Serial.println("\nSubnet scan complete!");
+        printDiscoveredDevices();
         return;
     }
 
@@ -321,3 +322,34 @@ void processSubnetScan() {
 
     discoverDevice(IPAddress(192, 168, 0, currentHost));
 } // end processSubnetScan
+
+void printDiscoveredDevices() {
+    Serial.println("\n===== DISCOVERED DEVICES =====");
+
+    if(discoveredDeviceCount == 0) {
+        Serial.println("No devices were discovered.");
+        return;
+    }
+
+    for(int i = 0; i < discoveredDeviceCount; i++) {
+        Serial.print("\nDevice ");
+        Serial.println(i + 1);
+
+        Serial.print("IP Address: ");
+        Serial.println(discoveredDevices[i].ipAddress);
+
+        Serial.print("MAC Address: ");
+
+        for(int j = 0; j < 6; j++) {
+            if(j > 0) {
+                Serial.print(":");
+            }
+
+            Serial.printf("%02X", discoveredDevices[i].macAddress[j]);
+        }
+
+        Serial.println();
+    }
+
+    Serial.println("\n==============================");
+} // end printDiscoveredDevices()
