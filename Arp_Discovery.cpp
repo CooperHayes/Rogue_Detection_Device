@@ -33,7 +33,6 @@ void startSubnetScan() {
         return;
     }
 
-    currentHost = 1;
     scanState = ScanState::DISCOVERING;
 
     Serial.println("Starting subnet scan.");
@@ -252,24 +251,36 @@ void processLookupResult(){
 
     Serial.println("\n--- ARP LOOKUP RESULT ---");
 
-    Serial.print("IP: ");
-    Serial.println(ip4addr_ntoa(&receivedResult.targetIP));
-
     if (receivedResult.success) {
+        if(discoveredDevicesCount < MAX_DISCOVERED_DEVICES){
+            DiscoveredDevice device;
 
-        Serial.println("Device successfully discovered!");
+            device.ipAddress = IPAddress(
+                ip4_addr1(&lookupResult.targetIP),
+                ip4_addr2(&lookupResult.targetIP),
+                ip4_addr3(&lookupResult.targetIP),
+                ip4_addr4(&lookupResult.targetIP)
+            );
 
-        Serial.printf(
-            "MAC: %02X:%02X:%02X:%02X:%02X:%02X\n",
-            receivedResult.mac[0],
-            receivedResult.mac[1],
-            receivedResult.mac[2],
-            receivedResult.mac[3],
-            receivedResult.mac[4],
-            receivedResult.mac[5]
-        );
+            memcpy(
+                device.macAddress,
+                lookupResult.mac,
+                6
+            );
+            
+            discoveredDevices[discoveredDevicesCount] = device;
 
-    } else {
+            discoveredDevicesCount = discoveredDevicesCount + 1;
+
+            Serial.println("Device added to discovered devices array.");
+        }
+        else{
+            Serial.print("Discovered devices array is full.");
+        }
+
+
+    } 
+    else {
 
         Serial.println("Discovery unsuccessful.");
         Serial.println("No resolved MAC address was found.");

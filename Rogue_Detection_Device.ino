@@ -3,6 +3,11 @@
 #include <Arduino.h>
 #include "Arp_discovery.h"
 
+const int MAX_DISCOVERED_DEVICES = 50;
+
+DiscoveredDevice DiscoveredDevices[MAX_DISCOVERED_DEVICES];
+
+int discoveredDevicesCount = 0;
 
 QueueHandle_t arpResultQueue = nullptr;
 QueueHandle_t arpLookupQueue = nullptr;

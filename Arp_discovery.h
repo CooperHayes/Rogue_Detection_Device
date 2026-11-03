@@ -21,6 +21,11 @@ struct ArpLookupResult {
     uint8_t mac[6];
 };
 
+struct DiscoveredDevice {
+    IPAddress ipAddress;
+    uint8_t macAddress[6];
+};
+
 // Scan state object for sequential ARP lookups
 enum class ScanState{
     IDLE, 
