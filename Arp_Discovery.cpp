@@ -256,10 +256,10 @@ void processLookupResult(){
             DiscoveredDevice device;
 
             device.ipAddress = IPAddress(
-                ip4_addr1(&lookupResult.targetIP),
-                ip4_addr2(&lookupResult.targetIP),
-                ip4_addr3(&lookupResult.targetIP),
-                ip4_addr4(&lookupResult.targetIP)
+                ip4_addr1(&receivedResult.targetIP),
+                ip4_addr2(&receivedResult.targetIP),
+                ip4_addr3(&receivedResult.targetIP),
+                ip4_addr4(&receivedResult.targetIP)
             );
 
             memcpy(
@@ -268,7 +268,7 @@ void processLookupResult(){
                 6
             );
             
-            discoveredDevices[discoveredDevicesCount] = device;
+            DiscoveredDevices[discoveredDevicesCount] = device;
 
             discoveredDevicesCount = discoveredDevicesCount + 1;
 
