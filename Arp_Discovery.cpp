@@ -264,7 +264,7 @@ void processLookupResult(){
 
             memcpy(
                 device.macAddress,
-                ReceivedResult.mac,
+                receivedResult.mac,
                 6
             );
             
