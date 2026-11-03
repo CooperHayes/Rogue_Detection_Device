@@ -14,8 +14,8 @@ bool arpLookupPending = false;
 
 // Subnet scanning variables
 static ScanState scanState = ScanState::IDLE;
-static uint8_t currentHost = 9;
-static uint8_t finalHost = 14;
+static uint8_t currentHost = 1;
+static uint8_t finalHost = 10;
 static bool lookupResultReceived = false;
 
 
