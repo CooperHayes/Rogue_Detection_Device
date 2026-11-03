@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include "Arp_discovery.h"
 
-const int MAX_DISCOVERED_DEVICES = 50;
+
 
 DiscoveredDevice DiscoveredDevices[MAX_DISCOVERED_DEVICES];
 
