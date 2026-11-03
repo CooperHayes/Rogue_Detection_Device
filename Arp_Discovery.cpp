@@ -326,17 +326,17 @@ void processSubnetScan() {
 void printDiscoveredDevices() {
     Serial.println("\n===== DISCOVERED DEVICES =====");
 
-    if(discoveredDeviceCount == 0) {
+    if(discoveredDevicesCount == 0) {
         Serial.println("No devices were discovered.");
         return;
     }
 
-    for(int i = 0; i < discoveredDeviceCount; i++) {
+    for(int i = 0; i < discoveredDevicesCount; i++) {
         Serial.print("\nDevice ");
         Serial.println(i + 1);
 
         Serial.print("IP Address: ");
-        Serial.println(discoveredDevices[i].ipAddress);
+        Serial.println(DiscoveredDevices[i].ipAddress);
 
         Serial.print("MAC Address: ");
 
@@ -345,7 +345,7 @@ void printDiscoveredDevices() {
                 Serial.print(":");
             }
 
-            Serial.printf("%02X", discoveredDevices[i].macAddress[j]);
+            Serial.printf("%02X", DiscoveredDevices[i].macAddress[j]);
         }
 
         Serial.println();
