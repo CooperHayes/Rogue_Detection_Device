@@ -37,7 +37,7 @@ enum class ScanState{
 // Shared variables for updating discovered devices array in processLookupResult()
 constexpr int MAX_DISCOVERED_DEVICES = 50;
 extern DiscoveredDevice DiscoveredDevices[MAX_DISCOVERED_DEVICES];
-extern int discoveredDeviceCount;
+extern int discoveredDevicesCount;
 
 // Shared queues
 extern QueueHandle_t arpResultQueue;
