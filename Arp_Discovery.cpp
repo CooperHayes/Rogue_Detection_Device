@@ -17,6 +17,8 @@ static ScanState scanState = ScanState::IDLE;
 static uint8_t currentHost = 1;
 static uint8_t finalHost = 10;
 static bool lookupResultReceived = false;
+const unsigned long SCAN_INTERVAL = 30000;
+unsigned long lastScanTime = 0;
 
 
 // Look up attempt variables
@@ -313,6 +315,7 @@ void processSubnetScan() {
         scanState = ScanState::COMPLETE;
         Serial.println("\nSubnet scan complete!");
         printDiscoveredDevices();
+        lastScanTime = millis();
         return;
     }
 
@@ -353,3 +356,24 @@ void printDiscoveredDevices() {
 
     Serial.println("\n==============================");
 } // end printDiscoveredDevices()
+
+
+void processContinuousScan() {
+    if(scanState == ScanState::COMPLETE &&
+       millis() - lastScanTime >= SCAN_INTERVAL) {
+
+        Serial.println("\nStarting a new subnet scan.");
+
+        // Reset scanning variables
+        discoveredDevicesCount = 0;
+        currentHost = 1;
+        scanState = ScanState::IDLE;
+
+        // Reset IP look up related variables
+        lookupResultReceived = false;
+        arpLookupPending = false;
+        lookupAttempts = 0;
+
+        startSubnetScan();
+    }
+} // end processContinuousScan()

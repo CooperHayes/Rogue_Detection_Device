@@ -53,6 +53,7 @@ void processArpResult();
 bool scheduleArpLookup();
 void processLookupResult();
 void printDiscoveredDevices();
+void processContinuousScan();
 
 // lwIP callback functions
 void findLwipInterface(void* argument);

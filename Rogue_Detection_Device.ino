@@ -42,5 +42,6 @@ void loop() {
     processArpResult();
     processLookupResult();
     processSubnetScan();
+    processContinuousScan();
     delay(100);
 }
