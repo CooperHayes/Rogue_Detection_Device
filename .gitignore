@@ -1,2 +1,9 @@
 discovery/secrets.h
 secrets.h
+.venv/
+__pycache__/
+*.pyc
+
+backend/*.db
+
+.env
