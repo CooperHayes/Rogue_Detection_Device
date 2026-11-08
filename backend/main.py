@@ -21,7 +21,7 @@ def receive_scan(scan : Scan):
 
     print(f"Device count: {len(scan.devices)}")
 
-     return {
+    return {
         "message": "Scan received successfully",
         "device_count": len(scan.devices)
     }
