@@ -301,7 +301,7 @@ void sendTestScanToBackend() {
     WiFiClient client;
     HTTPClient http;
 
-    const char* serverURL = String serverURL = String("http://") + LINUX_VM_IP + ":8000/scan";
+    String serverURL = String("http://") + LINUX_VM_IP + ":8000/scan";
 
     if (!http.begin(client, serverURL)) {
         Serial.println("Failed to initialize HTTP request.");
