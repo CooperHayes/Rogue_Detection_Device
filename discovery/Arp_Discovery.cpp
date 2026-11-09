@@ -297,6 +297,15 @@ void sendTestScanToBackend() {
         Serial.println("WiFi disconnected.");
         return;
     }
+    if (discoveredDevicesCount > 0) {
+        DiscoveredDevice device = DiscoveredDevices[0];
+
+        Serial.print("First discovered IP: ");
+        Serial.println(device.ipAddress.toString());
+
+        Serial.print("First MAC byte: ");
+        Serial.printf("%02X\n", device.macAddress[0]);
+    }
 
     WiFiClient client;
     HTTPClient http;
