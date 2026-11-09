@@ -1,8 +1,9 @@
 #include "Arp_discovery.h"
-
+#include "secrets.h"
 #include <lwip/tcpip.h>
 #include <WiFi.h>
 #include <esp_netif.h>
+#include <HTTPClient.h>
 
 
 
@@ -291,6 +292,49 @@ void processLookupResult(){
     lookupResultReceived = true;
 } // end processLookupResult
 
+void sendTestScanToBackend() {
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("WiFi disconnected.");
+        return;
+    }
+
+    WiFiClient client;
+    HTTPClient http;
+
+    const char* serverURL = String serverURL = String("http://") + LINUX_VM_IP + ":8000/scan";
+
+    if (!http.begin(client, serverURL)) {
+        Serial.println("Failed to initialize HTTP request.");
+        return;
+    }
+
+    http.setTimeout(5000);
+    http.addHeader("Content-Type", "application/json");
+
+    String payload = R"({
+        "devices": [
+            {
+                "ip": "192.168.0.5",
+                "mac": "AA:BB:CC:11:22:33"
+            }
+        ]
+    })";
+
+    int httpCode = http.POST(payload);
+
+    if (httpCode > 0) {
+        Serial.printf("HTTP status: %d\n", httpCode);
+        Serial.println(http.getString());
+    } else {
+        Serial.printf(
+            "HTTP error: %s\n",
+            http.errorToString(httpCode).c_str()
+        );
+    }
+
+    http.end();
+}
+
 void processSubnetScan() {
 
     // Only proceed if a scan is running.
@@ -316,6 +360,7 @@ void processSubnetScan() {
         Serial.println("\nSubnet scan complete!");
         printDiscoveredDevices();
         lastScanTime = millis();
+        sendTestScanToBackend();
         return;
     }
 
