@@ -12,41 +12,45 @@ void sendTestScanToBackend() {
         return;
     }
 
-    if (discoveredDevicesCount == 0) {
-        Serial.println("No discovered devices for this test.");
-        return;
+ 
+    String payload = "{\"devices\":[";
+    // Loop through all discovered devices in one subnet scan and construct a JSON payload
+    for (int i = 0; i < discoveredDevicesCount; i++) {
+
+        const DiscoveredDevice& device = DiscoveredDevices[i];
+
+        // Convert IP address to text.
+        String ip = device.ipAddress.toString();
+
+        // Convert MAC bytes to formatted text.
+        char macString[18];
+
+        snprintf(
+            macString,
+            sizeof(macString),
+            "%02X:%02X:%02X:%02X:%02X:%02X",
+            device.macAddress[0],
+            device.macAddress[1],
+            device.macAddress[2],
+            device.macAddress[3],
+            device.macAddress[4],
+            device.macAddress[5]
+        );
+
+        // Separate objects with commas.
+        if (i > 0) {
+            payload += ",";
+        }
+
+        // Append one discovered device.
+        payload += "{\"ip\":\"";
+        payload += ip;
+        payload += "\",\"mac\":\"";
+        payload += macString;
+        payload += "\"}";
     }
 
-    // Get the first discovered device.
-    const DiscoveredDevice& device = DiscoveredDevices[0];
-
-    String ip = device.ipAddress.toString();
-
-    // Format the MAC address.
-    char macString[18];
-
-    snprintf(
-        macString,
-        sizeof(macString),
-        "%02X:%02X:%02X:%02X:%02X:%02X",
-        device.macAddress[0],
-        device.macAddress[1],
-        device.macAddress[2],
-        device.macAddress[3],
-        device.macAddress[4],
-        device.macAddress[5]
-    );
-
-    // Construct the JSON payload.
-    String deviceJson = String("{\"ip\":\"") +
-                        ip +
-                        "\",\"mac\":\"" +
-                        macString +
-                        "\"}";
-
-    String payload = String("{\"devices\":[") +
-                     deviceJson +
-                     "]}";
+    payload += "]}";
 
     // Set up the HTTP connection.
     WiFiClient client;
