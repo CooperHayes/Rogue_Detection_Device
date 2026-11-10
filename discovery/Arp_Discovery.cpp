@@ -14,12 +14,12 @@ unsigned long lastLookup = 0;
 bool arpLookupPending = false;
 
 // Subnet scanning variables
-static bool lookupResultReceived = false;
+bool lookupResultReceived = false;
 
 
 
 // Look up attempt variables
-static uint8_t lookupAttempts = 0;
+uint8_t lookupAttempts = 0;
 static const uint8_t MAX_LOOKUP_ATTEMPTS = 3;
 
 
