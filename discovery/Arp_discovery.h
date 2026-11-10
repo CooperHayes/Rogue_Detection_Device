@@ -39,6 +39,11 @@ constexpr int MAX_DISCOVERED_DEVICES = 50;
 extern DiscoveredDevice DiscoveredDevices[MAX_DISCOVERED_DEVICES];
 extern int discoveredDevicesCount;
 
+// Shared variables for subnet scanner communication
+extern bool lookupResultReceived;
+extern bool arpLookupPending;
+extern uint8_t lookupAttempts;
+
 // Shared queues
 extern QueueHandle_t arpResultQueue;
 extern QueueHandle_t arpLookupQueue;
@@ -47,13 +52,10 @@ extern QueueHandle_t arpLookupQueue;
 void discoverDevice(IPAddress targetIP);
 bool isOnSubnet(IPAddress targetIP);
 void checkNetworkInterface();
-void startSubnetScan();
-void processSubnetScan();
 void processArpResult();
 bool scheduleArpLookup();
 void processLookupResult();
-void printDiscoveredDevices();
-void processContinuousScan();
+
 
 // lwIP callback functions
 void findLwipInterface(void* argument);

@@ -2,6 +2,8 @@
 #include <freertos/queue.h>
 #include <Arduino.h>
 #include "Arp_discovery.h"
+#include "backend_client.h"
+#include "subnet_scanner.h"
 
 
 

@@ -1,9 +1,9 @@
 #include "Arp_discovery.h"
-#include "secrets.h"
+#include "backend_client.h"
 #include <lwip/tcpip.h>
 #include <WiFi.h>
 #include <esp_netif.h>
-#include <HTTPClient.h>
+
 
 
 
@@ -14,12 +14,8 @@ unsigned long lastLookup = 0;
 bool arpLookupPending = false;
 
 // Subnet scanning variables
-static ScanState scanState = ScanState::IDLE;
-static uint8_t currentHost = 1;
-static uint8_t finalHost = 10;
 static bool lookupResultReceived = false;
-const unsigned long SCAN_INTERVAL = 30000;
-unsigned long lastScanTime = 0;
+
 
 
 // Look up attempt variables
@@ -29,19 +25,6 @@ static const uint8_t MAX_LOOKUP_ATTEMPTS = 3;
 
 static IPAddress discoveryTarget;
 
-void startSubnetScan() {
-
-    if (scanState != ScanState::IDLE) {
-        Serial.println("Scanner is already running.");
-        return;
-    }
-
-    scanState = ScanState::DISCOVERING;
-
-    Serial.println("Starting subnet scan.");
-
-    discoverDevice(IPAddress(192, 168, 0, currentHost));
-}
 
 void discoverDevice(IPAddress targetIP){
 
@@ -291,143 +274,3 @@ void processLookupResult(){
 
     lookupResultReceived = true;
 } // end processLookupResult
-
-void sendTestScanToBackend() {
-    if (WiFi.status() != WL_CONNECTED) {
-        Serial.println("WiFi disconnected.");
-        return;
-    }
-    if (discoveredDevicesCount > 0) {
-        DiscoveredDevice device = DiscoveredDevices[0];
-
-        Serial.print("First discovered IP: ");
-        Serial.println(device.ipAddress.toString());
-
-        Serial.print("First MAC byte: ");
-        Serial.printf("%02X\n", device.macAddress[0]);
-    }
-
-    WiFiClient client;
-    HTTPClient http;
-
-    String serverURL = String("http://") + LINUX_VM_IP + ":8000/scan";
-
-    if (!http.begin(client, serverURL)) {
-        Serial.println("Failed to initialize HTTP request.");
-        return;
-    }
-
-    http.setTimeout(5000);
-    http.addHeader("Content-Type", "application/json");
-
-    String payload = R"({
-        "devices": [
-            {
-                "ip": "192.168.0.5",
-                "mac": "AA:BB:CC:11:22:33"
-            }
-        ]
-    })";
-
-    int httpCode = http.POST(payload);
-
-    if (httpCode > 0) {
-        Serial.printf("HTTP status: %d\n", httpCode);
-        Serial.println(http.getString());
-    } else {
-        Serial.printf(
-            "HTTP error: %s\n",
-            http.errorToString(httpCode).c_str()
-        );
-    }
-
-    http.end();
-}
-
-void processSubnetScan() {
-
-    // Only proceed if a scan is running.
-    if (scanState != ScanState::DISCOVERING) {
-        return;
-    }
-
-    // Wait until the current IP lookup finishes.
-    if (lookupResultReceived == false) {
-        return;
-    }
-
-    // Reset the flag for the next IP.
-    lookupResultReceived = false;
-    lookupAttempts = 0;
-    arpLookupPending = false;
-    // Move to the next IP address.
-    currentHost++;
-
-    // Check whether we have reached the end of the scan.
-    if (currentHost > finalHost) {
-        scanState = ScanState::COMPLETE;
-        Serial.println("\nSubnet scan complete!");
-        printDiscoveredDevices();
-        lastScanTime = millis();
-        sendTestScanToBackend();
-        return;
-    }
-
-    // Start discovering the next IP.
-    Serial.print("\nScanning next IP: 192.168.0.");
-    Serial.println(currentHost);
-
-    discoverDevice(IPAddress(192, 168, 0, currentHost));
-} // end processSubnetScan
-
-void printDiscoveredDevices() {
-    Serial.println("\n===== DISCOVERED DEVICES =====");
-
-    if(discoveredDevicesCount == 0) {
-        Serial.println("No devices were discovered.");
-        return;
-    }
-
-    for(int i = 0; i < discoveredDevicesCount; i++) {
-        Serial.print("\nDevice ");
-        Serial.println(i + 1);
-
-        Serial.print("IP Address: ");
-        Serial.println(DiscoveredDevices[i].ipAddress);
-
-        Serial.print("MAC Address: ");
-
-        for(int j = 0; j < 6; j++) {
-            if(j > 0) {
-                Serial.print(":");
-            }
-
-            Serial.printf("%02X", DiscoveredDevices[i].macAddress[j]);
-        }
-
-        Serial.println();
-    }
-
-    Serial.println("\n==============================");
-} // end printDiscoveredDevices()
-
-
-void processContinuousScan() {
-    if(scanState == ScanState::COMPLETE &&
-       millis() - lastScanTime >= SCAN_INTERVAL) {
-
-        Serial.println("\nStarting a new subnet scan.");
-
-        // Reset scanning variables
-        discoveredDevicesCount = 0;
-        currentHost = 1;
-        scanState = ScanState::IDLE;
-
-        // Reset IP look up related variables
-        lookupResultReceived = false;
-        arpLookupPending = false;
-        lookupAttempts = 0;
-
-        startSubnetScan();
-    }
-} // end processContinuousScan()
