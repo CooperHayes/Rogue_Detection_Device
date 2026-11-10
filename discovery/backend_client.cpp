@@ -50,6 +50,7 @@ void sendTestScanToBackend() {
         payload += "\"}";
     }
 
+    // Finish construction of the JSON payload
     payload += "]}";
 
     // Set up the HTTP connection.
