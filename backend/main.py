@@ -40,26 +40,33 @@ def receive_scan(scan : Scan):
                 mac = discovered.mac.strip().upper()
 
                 # Determine if the device is already in the database
-                existing_device = db.scalar(
+                device = db.scalar(
                     select(Device).where(
                         Device.mac_address == mac
                     )
                 )
 
                 # If there is a device with the MAC address existing skip adding a new device
-                if existing_device is None:
-                    new_device = Device(mac_address=mac)
-                    db.add(new_device)
+                if device is None:
+                    device = Device(mac_address=mac)
+                    db.add(device)
+                    db.flush()
 
                     print(f"New device: {mac}")
                 else:
                     print(f"Existing device: {mac}")
+                
+                observation = ScanDevice(
+                    scan_id=scan_id,
+                    device_id=device.id,
+                    ip_address=discovered.ip
+                )
+
+                db.add(observation)
             
             # Commit the changes staged by db.add()
             db.commit()
-            db.refresh(new_scan)
-
-            scan_id = new_scan.id
+            
 
         except Exception:
             db.rollback()
