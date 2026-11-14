@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from database import Base, engine, SessionLocal
 from models import ScanRecord, Device, ScanDevice
 from sqlalchemy import select
-from sqlalchemy import ForeignKey, UniqueConstraint
+
 
 
 app = FastAPI()
