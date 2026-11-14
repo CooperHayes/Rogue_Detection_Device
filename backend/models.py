@@ -28,3 +28,28 @@ class Device(Base):
         unique=True,
         nullable=False
     )
+
+
+class ScanDevice(Base):
+    __tablename__ = "scan_devices"
+
+    __table_args__ = (
+        UniqueConstraint("scan_id", "device_id"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    scan_id: Mapped[int] = mapped_column(
+        ForeignKey("scans.id"),
+        nullable=False
+    )
+
+    device_id: Mapped[int] = mapped_column(
+        ForeignKey("devices.id"),
+        nullable=False
+    )
+
+    ip_address: Mapped[str] = mapped_column(
+        String(15),
+        nullable=False
+    )
