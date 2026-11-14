@@ -32,6 +32,8 @@ def receive_scan(scan : Scan):
             # Stage an entry of a scan to the SQLite database
             new_scan = ScanRecord(device_count=count)
             db.add(new_scan)
+            db.flush()
+            scan_id = new_scan.id
 
             # Iterate through the devices in the JSON
             for discovered in scan.devices:
