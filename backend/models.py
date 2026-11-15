@@ -54,3 +54,27 @@ class ScanDevice(Base):
         String(15),
         nullable=False
     )
+
+class KnownDevice(Base):
+    __tablename__ = "known_devices"
+
+    id: Mapped[int] = mapped_column(
+        primary_key=True
+    )
+
+    device_id: Mapped[int] = mapped_column(
+        ForeignKey("devices.id"),
+        unique=True,
+        nullable=False
+    )
+
+    device_name: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False
+    )
+
+    approved_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        server_default=func.current_timestamp(),
+        nullable=False
+    )
