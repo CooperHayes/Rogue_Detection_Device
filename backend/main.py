@@ -58,6 +58,18 @@ def receive_scan(scan : Scan):
                 else:
                     print(f"Existing device: {mac}")
                 
+                # Check whether this device is approved
+                approval = db.scalar(
+                    select(KnownDevice).where(
+                    KnownDevice.device_id == device.id
+                )
+                )
+
+                if approval is None:
+                    print(f"UNAPPROVED DEVICE: {mac}")
+                else:
+                    print(f"APPROVED DEVICE: {approval.device_name}")
+                # Add all observations of devices to scan_devices
                 observation = ScanDevice(
                     scan_id=scan_id,
                     device_id=device.id,
