@@ -69,6 +69,7 @@ def receive_scan(scan : Scan):
                     print(f"UNAPPROVED DEVICE: {mac}")
                 else:
                     print(f"APPROVED DEVICE: {approval.device_name}")
+                
                 # Add all observations of devices to scan_devices
                 observation = ScanDevice(
                     scan_id=scan_id,

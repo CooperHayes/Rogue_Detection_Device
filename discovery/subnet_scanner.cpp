@@ -8,8 +8,8 @@
 // Subnet scanner state
 static ScanState scanState = ScanState::IDLE;
 
-static uint8_t currentHost = 41;
-static uint8_t finalHost = 53;
+static uint8_t currentHost = 53;
+static uint8_t finalHost = 69;
 
 static const unsigned long SCAN_INTERVAL = 30000;
 static unsigned long lastScanTime = 0;
