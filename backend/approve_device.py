@@ -5,7 +5,7 @@ from sqlalchemy import select
 from database import SessionLocal
 from models import Device, KnownDevice
 
-# Function to manually approve a device
+# Function to manually approve a known device
 def approve_device(mac_address, device_name):
 
     mac = mac_address.strip().upper()
@@ -52,8 +52,8 @@ def approve_device(mac_address, device_name):
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print(
-            f'Usage: python approve_device.py\n
-            "MAC_ADDRESS:" {sys.argv[2]}'
+            'Usage: python approve_device.py '
+            '"MAC_ADDRESS" "DEVICE_NAME"'
         )
         sys.exit(1)
 
