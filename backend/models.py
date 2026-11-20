@@ -78,3 +78,38 @@ class KnownDevice(Base):
         server_default=func.current_timestamp(),
         nullable=False
     )
+
+
+class Alert(Base):
+    __tablename__ = "alerts"
+
+    id:Mapped[int] = mapped_column(
+        primary_key = True
+    )
+
+    device_id : Mapped[int] = mapped_column(
+        ForeignKey("devices.id"),
+        unique = True,
+        nullable = False
+    )
+
+    scan_id : Mapped[int] = mapped_column(
+        ForeignKey("scans.id"),
+        nullable = False
+    )
+
+    alert_type : Mapped[str] = mapped_column(
+        String(50),
+        nullable = False
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        server_default=func.current_timestamp(),
+        nullable=False
+    )
+
+    resolved_at: Mapped[datetime | None] = mapped_column(
+        DateTime,
+        nullable=True
+    )

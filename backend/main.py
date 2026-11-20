@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from database import Base, engine, SessionLocal
-from models import ScanRecord, Device, ScanDevice, KnownDevice
+from models import ScanRecord, Device, ScanDevice, KnownDevice, Alert
 from sqlalchemy import select
 
 
@@ -67,6 +67,30 @@ def receive_scan(scan : Scan):
 
                 if approval is None:
                     print(f"UNAPPROVED DEVICE: {mac}")
+
+                    # Search for an existing active alert
+                    existing_alert = db.scalar(
+                        select(Alert).where(
+                            Alert.device_id == device.id,
+                            Alert.alert_type == "UNAPPROVED_DEVICE",
+                            Alert.resolved_at.is_(None)
+                        )
+                    )
+                    # Create an alert only if one does not exist
+                    if existing_alert is None:
+
+                        new_alert = Alert(
+                            device_id=device.id,
+                            scan_id=scan_id,
+                            alert_type="UNAPPROVED_DEVICE"
+                        )
+
+                        db.add(new_alert)
+
+                        print(f"New alert registered: {mac}")
+
+                    else:
+                        print(f"Active alert already exists: {mac}")
                 else:
                     print(f"APPROVED DEVICE: {approval.device_name}")
                 
