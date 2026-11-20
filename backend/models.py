@@ -89,7 +89,6 @@ class Alert(Base):
 
     device_id : Mapped[int] = mapped_column(
         ForeignKey("devices.id"),
-        unique = True,
         nullable = False
     )
 
