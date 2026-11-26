@@ -1,5 +1,5 @@
 # Import
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from pydantic import BaseModel
 from database import Base, engine, SessionLocal
 from models import ScanRecord, Device, ScanDevice, KnownDevice, Alert
@@ -21,6 +21,14 @@ class DeviceResponse(BaseModel):
     id: int
     mac_address: str
     approved : bool
+
+class AlertResponse(BaseModel):
+    id: int
+    device_id: int
+    scan_id: int
+    alert_type: str
+    created_at: datetime
+    resolved_at: datetime | None
 
 
 Base.metadata.create_all(bind=engine)
@@ -140,6 +148,32 @@ def get_devices():
             for device, approval in results
         ]
     
+
+
+@app.get("/alerts", response_model=list[AlertResponse])
+def get_alerts(limit: int = Query(default=100, ge=1, le=500)):
+
+    with SessionLocal() as db:
+
+        statement = (
+            select(Alert)
+            .order_by(Alert.id.desc())
+            .limit(limit)
+        )
+
+        alerts = db.scalars(statement).all()
+
+        return [
+            AlertResponse(
+                id=alert.id,
+                device_id=alert.device_id,
+                scan_id=alert.scan_id,
+                alert_type=alert.alert_type,
+                created_at=alert.created_at,
+                resolved_at=alert.resolved_at
+            )
+            for alert in alerts
+        ]
 
 
 
