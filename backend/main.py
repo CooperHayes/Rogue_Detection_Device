@@ -17,6 +17,10 @@ class DiscoveredDevice(BaseModel):
 class Scan(BaseModel):
     devices: list[DiscoveredDevice]
 
+class DeviceResponse(BaseModel):
+    id: int
+    mac_address: str
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -104,6 +108,26 @@ def receive_scan(scan : Scan):
         "scan_id": scan_id,
         "device_count": len(scan.devices)
     }
+
+
+
+@app.get("/devices" , response_model = list[DeviceResponse])
+def get_devices():
+    
+        with SessionLocal() as db:
+
+            statement = select(Device).order_by(Device.id)
+
+            devices = db.scalars(statement).all()
+
+
+            return [
+                DeviceResponse(
+                    id = device.id
+                    mac_address = device.mac_address
+                )
+                for device in devices
+            ]
     
 
 
