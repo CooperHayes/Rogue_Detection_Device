@@ -114,20 +114,20 @@ def receive_scan(scan : Scan):
 @app.get("/devices" , response_model = list[DeviceResponse])
 def get_devices():
     
-        with SessionLocal() as db:
+    with SessionLocal() as db:
 
-            statement = select(Device).order_by(Device.id)
+        statement = select(Device).order_by(Device.id)
 
-            devices = db.scalars(statement).all()
+        devices = db.scalars(statement).all()
 
 
-            return [
-                DeviceResponse(
-                    id = device.id
-                    mac_address = device.mac_address
-                )
-                for device in devices
-            ]
+        return [
+            DeviceResponse(
+                id = device.id
+                mac_address = device.mac_address
+            )
+            for device in devices
+        ]
     
 
 

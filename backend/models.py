@@ -112,3 +112,4 @@ class Alert(Base):
         DateTime,
         nullable=True
     )
+
