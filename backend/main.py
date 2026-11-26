@@ -20,6 +20,7 @@ class Scan(BaseModel):
 class DeviceResponse(BaseModel):
     id: int
     mac_address: str
+    approved : bool
 
 
 Base.metadata.create_all(bind=engine)
@@ -116,7 +117,7 @@ def get_devices():
     
     with SessionLocal() as db:
 
-       # Retrieve devices and matching approval records
+        # Retrieve devices and matching approval records
         statement = (
             select(Device, KnownDevice)
             .outerjoin(
