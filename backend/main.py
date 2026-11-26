@@ -123,7 +123,7 @@ def get_devices():
 
         return [
             DeviceResponse(
-                id = device.id
+                id = device.id,
                 mac_address = device.mac_address
             )
             for device in devices
