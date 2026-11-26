@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from database import Base, engine, SessionLocal
 from models import ScanRecord, Device, ScanDevice, KnownDevice, Alert
 from sqlalchemy import select
+from datetime import datetime
 
 
 
