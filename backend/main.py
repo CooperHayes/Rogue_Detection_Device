@@ -116,17 +116,27 @@ def get_devices():
     
     with SessionLocal() as db:
 
-        statement = select(Device).order_by(Device.id)
+       # Retrieve devices and matching approval records
+        statement = (
+            select(Device, KnownDevice)
+            .outerjoin(
+                KnownDevice,
+                Device.id == KnownDevice.device_id
+            )
+            .order_by(Device.id)
+        )
 
-        devices = db.scalars(statement).all()
+        # Execute the query
+        results = db.execute(statement).all()
 
-
+        # Construct the response
         return [
             DeviceResponse(
-                id = device.id,
-                mac_address = device.mac_address
+                id=device.id,
+                mac_address=device.mac_address,
+                approved=approval is not None
             )
-            for device in devices
+            for device, approval in results
         ]
     
 
