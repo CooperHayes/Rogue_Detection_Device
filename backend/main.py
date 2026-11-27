@@ -3,7 +3,7 @@ from fastapi import FastAPI, Query
 from pydantic import BaseModel
 from database import Base, engine, SessionLocal
 from models import ScanRecord, Device, ScanDevice, KnownDevice, Alert
-from sqlalchemy import select
+from sqlalchemy import select, func
 from datetime import datetime
 
 
@@ -30,6 +30,11 @@ class AlertResponse(BaseModel):
     alert_type: str
     created_at: datetime
     resolved_at: datetime | None
+
+class DeviceAlertStats(BaseModel):
+    device_id: int
+    mac_address: str
+    alert_count: int
 
 
 Base.metadata.create_all(bind=engine)
@@ -174,6 +179,45 @@ def get_alerts(limit: int = Query(default=100, ge=1, le=500)):
                 resolved_at=alert.resolved_at
             )
             for alert in alerts
+        ]
+    
+
+@app.get("/analytics/alerts-per-device", response_model=list[DeviceAlertStats])
+def get_alert_statistics():
+
+    with SessionLocal() as db:
+
+        statement = (
+            select(
+                Device.id,
+                Device.mac_address,
+                func.count(Alert.id).label("alert_count")
+            )
+            .join(
+                Alert,
+                Device.id == Alert.device_id
+            )
+            .where(
+                Alert.alert_type == "UNAPPROVED_DEVICE"
+            )
+            .group_by(
+                Device.id,
+                Device.mac_address
+            )
+            .order_by(
+                func.count(Alert.id).desc()
+            )
+        )
+
+        results = db.execute(statement).all()
+
+        return [
+            DeviceAlertStats(
+                device_id=device_id,
+                mac_address=mac,
+                alert_count=count
+            )
+            for device_id, mac, count in results
         ]
 
 
