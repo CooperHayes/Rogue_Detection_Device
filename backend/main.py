@@ -198,7 +198,8 @@ def get_alert_statistics():
                 Device.id == Alert.device_id
             )
             .where(
-                Alert.alert_type == "UNAPPROVED_DEVICE"
+                Alert.alert_type == "UNAPPROVED_DEVICE",
+                Alert.resolved_at.is_(None)
             )
             .group_by(
                 Device.id,
